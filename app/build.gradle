@@ -14,6 +14,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Document server address field
+        buildConfigField("String", "DOCUMENT_SERVER_URL", "\"\"")
     }
 
     buildTypes {

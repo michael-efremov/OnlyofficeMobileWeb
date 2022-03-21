@@ -1,6 +1,7 @@
 package ru.mike.florida
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebResourceRequest
@@ -19,7 +20,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         webView = view.findViewById(R.id.main_web_view)
         setSettings()
-        webView?.loadUrl("https://kim.teamlab.info/example/")
+        if (BuildConfig.DOCUMENT_SERVER_URL.isEmpty()) {
+            showDialog()
+        } else {
+            webView?.loadUrl(BuildConfig.DOCUMENT_SERVER_URL)
+        }
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -34,9 +40,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         webView?.webViewClient = MainWebViewClient(findNavController())
     }
 
+    private fun showDialog() {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Document server url is empty.\nYou must specify the address in build.gradle")
+            .setPositiveButton("Ok") { dialog, _ ->
+                dialog.dismiss()
+                requireActivity().finish()
+            }
+            .create()
+            .show()
+    }
 }
 
-private class MainWebViewClient(private val navController: NavController): WebViewClient() {
+private class MainWebViewClient(private val navController: NavController) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         val url = request?.url
